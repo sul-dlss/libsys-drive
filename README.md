@@ -15,6 +15,18 @@ the file uploader must do the following:
 1. Upload files into the shared folder to be processed by libsys services. It is possible to 
 create sub-folders in this shared drive as appropriate to the specific project.
 
+## Running the script
+From the command line, or in a shell script, or via the crontab, call the python script as follows:
+```
+python libsys_drive.py {Google-Drive-shared-folder-name} {files-download-directory}
+```
+e.g.
+```
+python libsys_drive.py MapScan /tmp/storage/dir
+```
+In this example if there are any files shared with the service account with the folder named `MapScan`, they will be
+downloaded to the local folder `/tmp/storage/dir`.
+
 ## Development
 ### Setup
 1. Clone this repository
