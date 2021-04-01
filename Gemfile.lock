@@ -1,0 +1,52 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    airbrussh (1.4.0)
+      sshkit (>= 1.6.1, != 1.7.0)
+    bundler-audit (0.8.0)
+      bundler (>= 1.2.0, < 3)
+      thor (~> 1.0)
+    capistrano (3.16.0)
+      airbrussh (>= 1.0.0)
+      i18n
+      rake (>= 10.0.0)
+      sshkit (>= 1.9.0)
+    capistrano-bundle_audit (0.4.0)
+      bundler-audit (~> 0.5)
+      capistrano (~> 3.0)
+      capistrano-bundler (>= 1.4)
+    capistrano-bundler (2.0.1)
+      capistrano (~> 3.1)
+    capistrano-one_time_key (0.1.0)
+      capistrano (~> 3.0)
+    capistrano-shared_configs (0.2.2)
+    concurrent-ruby (1.1.8)
+    dlss-capistrano (3.11.1)
+      capistrano (~> 3.0)
+      capistrano-bundle_audit (>= 0.3.0)
+      capistrano-one_time_key
+      capistrano-shared_configs
+    i18n (1.8.10)
+      concurrent-ruby (~> 1.0)
+    net-scp (3.0.0)
+      net-ssh (>= 2.6.5, < 7.0.0)
+    net-ssh (6.1.0)
+    rake (13.0.3)
+    sshkit (1.21.2)
+      net-scp (>= 1.1.2)
+      net-ssh (>= 2.8.0)
+    thor (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  capistrano
+  capistrano-bundler
+  dlss-capistrano
+
+RUBY VERSION
+   ruby 2.6.3p62
+
+BUNDLED WITH
+   2.1.4
