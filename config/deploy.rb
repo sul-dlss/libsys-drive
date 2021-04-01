@@ -15,7 +15,7 @@ set :deploy_to, "/s/SUL/Bin/LibsysDrive/#{fetch(:application)}"
 
 # Default value for linked_dirs is []
 # set :linked_dirs, %w[]
-set :linked_dirs, %w(cert)
+set :linked_dirs, %w[cert]
 
 # Default value for keep_releases is 5
 set :keep_releases, 3
@@ -28,8 +28,7 @@ namespace :deploy do
   desc 'install dependencies'
   on roles(:app) do
     within release_path do
-        execute "pip install -r requirements.txt"
+      execute 'source /s/SUL/Bin/py3-env/bin/activate && pip install -r requirements.txt'
     end
-
   end
 end
