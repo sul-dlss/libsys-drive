@@ -7,7 +7,7 @@ import sys
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 SERVICE_ACCOUNT_EMAIL = 'libsys@sul-libsys-files.iam.gserviceaccount.com'
-SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'sul-libsys-files-7c74e969a1ee.p12'
+SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'cert/sul-libsys-files-7c74e969a1ee.p12'
 
 def main(folder_name, download_directory):
     credentials = ServiceAccountCredentials.from_p12_keyfile(
