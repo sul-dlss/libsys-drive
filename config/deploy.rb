@@ -27,6 +27,6 @@ set :default_env, { path: '/s/sirsi/.rvm/gems/ruby-2.6.3/bin:/usr/local/rvm/gems
 task :deploy do
   desc 'install dependencies'
   on roles(:app) do
-    execute "cd #{release_path} && source /s/SUL/Bin/py3-env/bin/activate && pip3 install -r requirements.txt"
+    execute "cd #{release_path} && pip3 install -r requirements.txt"
   end
 end
