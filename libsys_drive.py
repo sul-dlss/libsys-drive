@@ -7,6 +7,8 @@ import io
 import os
 import sys
 
+
+
 DOWNLOADED_FILES_PATH = os.environ.get('DOWNLOADED_FILES_PATH') or '.'
 SERVICE_ACCOUNT_EMAIL = os.environ.get('SERVICE_ACCOUNT_EMAIL') or 'libsys@sul-libsys-files.iam.gserviceaccount.com'
 SERVICE_ACCOUNT_PKCS12_FILE_PATH = os.environ.get('SERVICE_ACCOUNT_PKCS12_FILE_PATH') or 'cert/sul-libsys-files.p12'
@@ -46,7 +48,7 @@ def main(args):
     folder_id = None
 
     if not folders:
-        sys.exit(f'No folders found.')
+        sys.exit('No folders found.')
     else:
         for folder in folders:
             if folder['name'] == folder_name:
