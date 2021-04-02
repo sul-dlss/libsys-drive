@@ -1,20 +1,31 @@
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from oauth2client.service_account import ServiceAccountCredentials
+from pathlib import Path
 import httplib2
 import io
+import os
 import sys
 
-SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_EMAIL = 'libsys@sul-libsys-files.iam.gserviceaccount.com'
-SERVICE_ACCOUNT_PKCS12_FILE_PATH = 'cert/sul-libsys-files-7c74e969a1ee.p12'
+DOWNLOADED_FILES_PATH = os.environ.get('DOWNLOADED_FILES_PATH') or '.'
+SERVICE_ACCOUNT_EMAIL = os.environ.get('SERVICE_ACCOUNT_EMAIL') or 'libsys@sul-libsys-files.iam.gserviceaccount.com'
+SERVICE_ACCOUNT_PKCS12_FILE_PATH = os.environ.get('SERVICE_ACCOUNT_PKCS12_FILE_PATH') or 'cert/sul-libsys-files.p12'
 
-def main(folder_name, download_directory):
+def main(args):
+    folder_name = args[1]
+    try:
+        download_directory = args[2]
+    except IndexError:
+        download_directory = DOWNLOADED_FILES_PATH
+
     credentials = ServiceAccountCredentials.from_p12_keyfile(
         SERVICE_ACCOUNT_EMAIL,
         SERVICE_ACCOUNT_PKCS12_FILE_PATH,
         'notasecret',
-        scopes=SCOPES)
+        scopes=[
+            'https://www.googleapis.com/auth/drive',
+        ]
+    )
 
     http = httplib2.Http()
     http = credentials.authorize(http)
@@ -59,17 +70,21 @@ def main(folder_name, download_directory):
         sys.exit(f'No files found in Google drive folder {folder_name}.')
     else:
         for item in items:
-            try:
-                # print("Name: %s, " % item['name'], "File ID: %s, " % item['id'], "Folder ID: %a" % item['parents'])
-                request = service.files().export_media(fileId=item['id'], mimeType="text/plain")
-                fh = io.FileIO(f'{download_directory}/{item["name"]}', 'wb')
-                downloader = MediaIoBaseDownload(fh, request)
-                done = False
-                while done is False:
-                    status, done = downloader.next_chunk()
-                    # print("Download %d%%." % int(status.progress() * 100))
-            except Exception as error:
-                sys.exit(f'Name: {item["name"]} File ID: {item["id"]}')
+            downloaded = os.listdir(DOWNLOADED_FILES_PATH)
+            if not item['id'] in downloaded:
+                try:
+                    # print("Name: %s, " % item['name'], "File ID: %s, " % item['id'], "Folder ID: %a" % item['parents'])
+                    request = service.files().export_media(fileId=item['id'], mimeType="text/plain")
+                    fh = io.FileIO(f'{download_directory}/{item["name"]}', 'wb')
+                    downloader = MediaIoBaseDownload(fh, request)
+                    done = False
+                    while done is False:
+                        status, done = downloader.next_chunk()
+                        # print("Download %d%%." % int(status.progress() * 100))
+                    Path(f'{DOWNLOADED_FILES_PATH}/{item["id"]}').touch()
+                except Exception as error:
+                    sys.exit(f'Name: {item["name"]} File ID: {item["id"]} :: {error}')
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main (sys.argv)
+    # main(sys.argv[1], sys.argv[2])
