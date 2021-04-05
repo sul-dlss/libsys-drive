@@ -1,3 +1,7 @@
+black
+flake8
 google-api-python-client
+mypy
 oauth2client
 pyOpenSSL
+pytest
