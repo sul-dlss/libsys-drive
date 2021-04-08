@@ -5,3 +5,4 @@ mypy
 oauth2client
 pyOpenSSL
 pytest
+pytest-mock
