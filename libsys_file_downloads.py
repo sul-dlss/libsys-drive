@@ -17,7 +17,7 @@ SERVICE_ACCOUNT_PKCS12_FILE_PATH = (
 )
 
 
-class LibSysDrive:
+class LibsysFileDownloads:
     def __init__(self, args):
         self.args = args
         folder_name = args[1]
@@ -25,14 +25,15 @@ class LibSysDrive:
         try:
             download_directory = args[2]
         except IndexError:
-            download_directory = DOWNLOADED_FILES_PATH
+            download_directory = "."
 
         self.gDrive = self.service()
 
         self.download(folder_name, download_directory)
 
-    def service(self):
-        credentials = ServiceAccountCredentials.from_p12_keyfile(
+    @staticmethod
+    def credentials():
+        return ServiceAccountCredentials.from_p12_keyfile(
             SERVICE_ACCOUNT_EMAIL,
             SERVICE_ACCOUNT_PKCS12_FILE_PATH,
             "notasecret",
@@ -41,26 +42,34 @@ class LibSysDrive:
             ],
         )
 
-        http = httplib2.Http()
-        http = credentials.authorize(http)
+    def http(self):
+        return self.credentials().authorize(httplib2.Http())
 
-        return build("drive", "v3", http=http)
+    def service(self):
+        return build("drive", "v3", http=self.http())
 
-    def folder_id(self, folder_name):
-        folder_results = (
+    def service_results(self, query):
+        return (
             self.gDrive.files()
             .list(
-                fields="nextPageToken, files(id, name)",
-                q="mimeType = 'application/vnd.google-apps.folder'",
+                supportsAllDrives="true",
+                includeItemsFromAllDrives="true",
+                corpora="allDrives",
+                fields="nextPageToken, files(id, name, parents)",
+                q=query,
             )
             .execute()
         )
+
+    def folder_id(self, folder_name):
         """
         Loop through all the folders and find the folder id
         of the folder name provided from the command line
         """
-        folders = folder_results.get("files", [])
         folder_id = None
+        folders = self.service_results(
+            "mimeType='application/vnd.google-apps.folder'"
+        ).get("files", [])
 
         if not folders:
             sys.exit("No folders found.")
@@ -68,7 +77,7 @@ class LibSysDrive:
             for folder in folders:
                 if folder["name"] == folder_name:
                     folder_id = folder["id"]
-                    # print("Found: %s " % folder_name, ": %s" % folder_id)
+                    # print("Folder Name: %s " % folder_name, ": %s" % folder_id)
 
         if folder_id is None:
             sys.exit("No folders found named %s." % folder_name)
@@ -81,16 +90,7 @@ class LibSysDrive:
         """
         folder = self.folder_id(folder_name)
 
-        file_results = (
-            self.gDrive.files()
-            .list(
-                fields="nextPageToken, files(id, name, parents)",
-                q=f"'{folder}' in parents",
-            )
-            .execute()
-        )
-
-        files = file_results.get("files", [])
+        files = self.service_results(f"'{folder}' in parents").get("files", [])
 
         if not files:
             sys.exit("No files found in Google drive folder %s." % folder_name)
@@ -100,8 +100,8 @@ class LibSysDrive:
     def download(self, folder_name, download_directory):
         items = self.file_ids(folder_name)
         for item in items:
-            downloaded = os.listdir(DOWNLOADED_FILES_PATH)
-            if not item["id"] in downloaded:
+            previously_downloaded = os.listdir(DOWNLOADED_FILES_PATH)
+            if not item["id"] in previously_downloaded:
                 try:
                     """
                     print(
@@ -111,6 +111,7 @@ class LibSysDrive:
                     )
                     """
 
+                    # TODO: determine if the text/plain mime type will work for MARC files
                     request = self.gDrive.files().export_media(
                         fileId=item["id"], mimeType="text/plain"
                     )
@@ -128,4 +129,4 @@ class LibSysDrive:
 
 
 if __name__ == "__main__":
-    LibSysDrive(sys.argv)
+    LibsysFileDownloads(sys.argv)
