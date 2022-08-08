@@ -15,7 +15,7 @@ GEM
       bundler-audit (~> 0.5)
       capistrano (~> 3.0)
       capistrano-bundler (>= 1.4)
-    capistrano-bundler (2.0.1)
+    capistrano-bundler (2.1.0)
       capistrano (~> 3.1)
     capistrano-one_time_key (0.1.0)
       capistrano (~> 3.0)
