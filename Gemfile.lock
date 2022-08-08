@@ -3,7 +3,7 @@ GEM
   specs:
     airbrussh (1.4.1)
       sshkit (>= 1.6.1, != 1.7.0)
-    bundler-audit (0.8.0)
+    bundler-audit (0.9.1)
       bundler (>= 1.2.0, < 3)
       thor (~> 1.0)
     capistrano (3.17.1)
@@ -21,7 +21,7 @@ GEM
       capistrano (~> 3.0)
     capistrano-shared_configs (0.2.2)
     concurrent-ruby (1.1.10)
-    dlss-capistrano (3.11.1)
+    dlss-capistrano (4.3.1)
       capistrano (~> 3.0)
       capistrano-bundle_audit (>= 0.3.0)
       capistrano-one_time_key
@@ -35,7 +35,7 @@ GEM
     sshkit (1.21.2)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
-    thor (1.1.0)
+    thor (1.2.1)
 
 PLATFORMS
   ruby
